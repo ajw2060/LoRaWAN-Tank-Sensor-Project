@@ -1,0 +1,71 @@
+# This is the YAML configuration file for the Solar Monitor Pump Control (SMPC) system.
+
+#  DO NOT USE TABS IN THIS FILE, or if you do, ensure the editor converts them to spaces.
+
+
+station_configuration:       # This defines the station running the script
+    mqtt_station_name:  "xx"
+    mqtt_user_name:     "yy"
+    mqtt_user_password: "zz"
+
+broker_configuration:        #This defines the broker we will connect to
+    broker_name: "bbbb.com.au"
+    broker_port: 1883
+    broker_timeout: 60
+
+subscribe_topic_names:       # This identifies topics to subscribe to 
+    topic_pump_cmd:         "topic1"           # This topic is used for all commands such as on/off as well as mode changes
+    topic_tank_waterlevel:  "topic2"  # This identifies which tank level to subscribe to. Must match publish topic in TankDataWriter.
+
+publish_topic_names:         # This identifies topics to use when publishing 
+    topic_pump_cmdack:  "topic3"
+    topic_pump_status:  "topic4"
+    topic_pump_lwt:     "topic/lwt"
+
+system_configuration:           # This sets the default startup mode
+    # Valid startup modes are as follows.  Any other value defaults to manual.
+    # 1=manual, 2=semi-automatic, 3=automatic 
+    system_startup_mode: 2
+
+home_assistant_configuration:       # These bits are specific to Home Assistant and look after registering this device in HA.
+    ha_announce_on_start: True      
+    ha_announce_topic:  "homeassistant/binarysensor/pumpcontroller/config"
+    ha_available_topic: "homeassistant/binarysensor/pumpcontroller/available"
+    ha_config_data:
+        name: "Whatever Pump Controller"
+        command_topic: "topic"
+        payload_on: "1"
+        payload_off: "0"
+        availability_topic: "homeassistant/switch/pumpcontroller/available"
+        state_topic: "homeassistant/switch/pumpcontroller/available"
+        unique_id: "haid"
+
+
+tank_level_thresholds:       # This specifies the water level at which the pump switches on and off when running in automatic mode
+    tank_threshold_low:  0.3
+    tank_threshold_high: 0.95
+    tank_waterlevel_maximum_age: 9000   
+    
+    # This 'tank_waterlevel_maximum_age' is the maximum age in seconds permitted between water level updates.  
+    # If the recorded water level reading is older than this then the reading is considered out of date (stale).
+    # This is also therefore the dead time alarm for the water level updates.  If no update is received in this window
+    # then the sending sensor is declared offline and then semi-automatic and automatic modes will turn the pump off to be safe.
+    
+
+environment_thresholds:      # These define the trigger levels and recovery deltas for temperature and humidity alarms.
+    enclosure_temp_alarm_setting: 45
+    enclosure_humidity_alarm_setting: 90
+    cpu_temp_alarm_setting: 65
+    battery_low_voltage_alarm_setting: 11.5     
+    
+
+environment_threshold_recovery_hysterisis:      # Suggest not messing with any hysterisis values.  Matches each value above.
+    enclosure_temp_recovery_hysterisis_value: 3        
+    enclosure_humidity_recovery_hysterisis_value: 10
+    cpu_temp_recovery_hysterisis_value: 5     
+    battery_low_voltage_recovery_hysterisis_value: 2
+
+
+backup_data_handling:        # This manages where the unwritten data gets stashed.
+    nix_data_parking_area:  "/home/pi/Logs/log-messages.log"
+    win_data_parking_area:  "c://temp//logs//log-messages.log"

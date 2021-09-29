@@ -1,0 +1,42 @@
+# This is the YAML configuration file for the Remote Switch module.
+#  DO NOT USE TABS IN THIS FILE, or if you do, ensure the editor converts them to spaces.
+
+broker_configuration:        # This defines the broker we will connect to
+    broker_name: "bbb.com"
+    broker_port: 1883
+    broker_timeout: 60
+
+subscribe_topic_names:       # This identifies topics to subscribe to 
+    topic_pump_status:      "topcxx"
+    topic_tank_waterlevel:  "topicyy"     # This identifies which tank level to subscribe to    
+    topic_pump_lwt:         "topic/lwt"           # Pump LWT messages from broker
+
+publish_topic_names:         # This identifies topics to use when publishing 
+    topic_pump_cmd:         "topicxx-cmd"
+    topic_local_status:     "topicyy-lstat"
+
+station_configuration:       # This defines the station running the script
+    mqtt_station_name:  "whatever"
+    mqtt_user_name:     "usernamehere"
+    mqtt_user_password: "passwordhere"     
+    # The alias is used in cmd messages as a simple message source.  It is decorative.
+    mqtt_station_alias: "Pump Remote Switch" 
+
+environment_thresholds:      # These define the trigger levels and recovery deltas for temperature and humidity alarms
+    enclosure_temp_alarm_setting: 35
+    enclosure_humidity_alarm_setting: 90
+    cpu_temp_alarm_setting: 60
+    battery_low_voltage_alarm_setting: 11.5         # Not currently used by remote control module    
+
+environment_threshold_recovery_hysterisis:      # Suggest not messing with any hysterisis values.  Matches each value above.
+    enclosure_temp_recovery_hysterisis_value: 3        
+    enclosure_humidity_recovery_hysterisis_value: 10
+    cpu_temp_recovery_hysterisis_value: 5     
+    battery_low_voltage_recovery_hysterisis_value: 2
+
+backup_data_handling:        # This manages where the unwritten data gets stashed.
+    nix_data_parking_area:  "/home/pi/Logs/log-messages.log"
+    win_data_parking_area:  "c://temp//logs//log-messages.log"
+
+alarm_thresholds:
+    status_freshness_threshold: 65          # Time in minutes after which a status report from the controller is considered expired
